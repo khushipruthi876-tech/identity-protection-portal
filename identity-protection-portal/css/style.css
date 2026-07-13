@@ -1,0 +1,162 @@
+:root {
+  --primary: #2b5fad;
+  --primary-dark: #1e4380;
+  --accent: #f5a623;
+  --bg: #eef3fb;
+  --card-bg: #ffffff;
+  --text: #1c2b3a;
+  --muted: #5a6b7d;
+  --radius: 10px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+  background: var(--primary);
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar h1 {
+  font-size: 1.3rem;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Layout ---------- */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 24px;
+}
+
+.card h2 {
+  margin-bottom: 12px;
+  color: var(--primary-dark);
+}
+
+.card p {
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+/* ---------- Hero (index page) ---------- */
+.hero {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.hero h1 {
+  font-size: 2.2rem;
+  color: var(--primary-dark);
+  margin-bottom: 16px;
+}
+
+.hero p {
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto 30px;
+  font-size: 1.05rem;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 12px 26px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+}
+
+.btn-secondary {
+  background: var(--accent);
+}
+
+.btn-secondary:hover {
+  background: #d98f12;
+}
+
+/* ---------- Forms ---------- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 380px;
+}
+
+input {
+  padding: 12px 14px;
+  border: 1px solid #cbd6e2;
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+
+input:focus {
+  outline: 2px solid var(--primary);
+}
+
+.error-text {
+  color: #c0392b;
+  font-size: 0.9rem;
+  display: none;
+}
+
+/* ---------- Dashboard grid ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.grid .card h3 {
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
