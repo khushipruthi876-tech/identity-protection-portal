@@ -16,26 +16,62 @@
   </nav>
 
   <div class="container">
-    <div class="card" style="max-width: 420px; margin: 0 auto;">
+
+    <!-- LOGIN FORM -->
+    <div class="card" style="max-width: 420px; margin: 0 auto;" id="loginCard">
       <h2>Login</h2>
       <p>Enter your credentials to access your dashboard.</p>
 
       <form id="loginForm">
-        <input type="email" id="email" placeholder="Email address" required />
-        <input type="password" id="password" placeholder="Password" required />
-        <p class="error-text" id="errorText">Invalid email or password.</p>
+        <input type="email" id="loginEmail" placeholder="Email address" required />
+        <input type="password" id="loginPassword" placeholder="Password" required />
+        <p class="error-text" id="loginError"></p>
         <button type="submit" class="btn">Log In</button>
       </form>
 
       <p style="margin-top: 16px; font-size: 0.9rem;">
         Don't have an account?
-        <a href="#" id="signupLink" style="color: var(--primary);">Sign up</a>
+        <a href="#" id="showSignup" style="color: var(--primary);">Sign up</a>
       </p>
     </div>
+
+    <!-- SIGN UP FORM (hidden by default) -->
+    <div class="card" style="max-width: 420px; margin: 0 auto; display:none;" id="signupCard">
+      <h2>Create Account</h2>
+      <p>Sign up to start protecting your digital identity.</p>
+
+      <form id="signupForm">
+        <input type="email" id="signupEmail" placeholder="Email address" required />
+        <input type="password" id="signupPassword" placeholder="Password (min 8 chars)" required />
+        <p class="error-text" id="signupError"></p>
+        <button type="submit" class="btn">Sign Up</button>
+      </form>
+
+      <p style="margin-top: 16px; font-size: 0.9rem;">
+        Already have an account?
+        <a href="#" id="showLogin" style="color: var(--primary);">Log in</a>
+      </p>
+    </div>
+
+    <!-- VERIFY CODE FORM (hidden by default) -->
+    <div class="card" style="max-width: 420px; margin: 0 auto; display:none;" id="verifyCard">
+      <h2>Verify Your Email</h2>
+      <p>We sent a verification code to <span id="verifyEmailLabel"></span>. Enter it below.</p>
+
+      <form id="verifyForm">
+        <input type="text" id="verifyCode" placeholder="6-digit code" required />
+        <p class="error-text" id="verifyError"></p>
+        <button type="submit" class="btn">Verify & Continue</button>
+      </form>
+    </div>
+
   </div>
 
-  <footer>&copy; 2026 Digital Identity Protection Portal — Student Project</footer>
+  <footer>&copy; 2026 Digital Identity Protection Portal </footer>
 
+  <!-- Amazon Cognito Identity SDK (no build tools needed) -->
+  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+  <script src="js/cognito-config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
