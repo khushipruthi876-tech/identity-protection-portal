@@ -156,7 +156,140 @@ input:focus {
 
 footer {
   text-align: center;
+  padding: 30px 20px 16px;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.footer-links {
+  margin-bottom: 10px;
+}
+
+.footer-links a {
+  color: var(--primary);
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 0.9rem;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- About / Problem Statement ---------- */
+.section {
+  padding: 50px 20px;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 1.7rem;
+  color: var(--primary-dark);
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--muted);
+  max-width: 650px;
+  margin: 0 auto 40px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin: 30px 0;
+}
+
+.stat-box {
+  text-align: center;
+}
+
+.stat-box .number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-box .label {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- How it works ---------- */
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+.step-box {
+  text-align: center;
   padding: 20px;
+}
+
+.step-number {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin: 0 auto 12px;
+}
+
+.step-box h4 {
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.step-box p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Dashboard stat cards ---------- */
+.stat-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stat-card .value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.risk-low { color: #2e9e5b; }
+.risk-medium { color: #d98f12; }
+.risk-high { color: #c0392b; }
+
+.activity-list {
+  list-style: none;
+}
+
+.activity-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #e7edf5;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.activity-list li:last-child {
+  border-bottom: none;
+}
+
+.activity-list .time {
   color: var(--muted);
   font-size: 0.85rem;
 }
