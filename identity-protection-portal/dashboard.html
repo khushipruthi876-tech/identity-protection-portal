@@ -51,7 +51,7 @@
       <div class="card">
         <h3>⚠️ Breach Check</h3>
         <p>Check if your email has been exposed in a known data breach.</p>
-        <a href="#" class="btn">Run Check</a>
+        <a href="#" class="btn" id="openBreachCheck">Run Check</a>
       </div>
       <div class="card">
         <h3>🔍 Footprint Analyzer</h3>
@@ -68,6 +68,23 @@
         <p>Learn how to keep your identity safe online.</p>
         <a href="#" class="btn btn-secondary">Explore</a>
       </div>
+    </div>
+
+    <!-- Breach Check tool (hidden by default) -->
+    <div class="card" id="breachCheckCard" style="display:none; margin-top: 20px;">
+      <h2>⚠️ Run a Breach Check</h2>
+      <p>Enter an email address to check against known data breaches.</p>
+
+      <form id="breachCheckForm" style="max-width: 420px;">
+        <input type="email" id="breachEmail" placeholder="Email address" required />
+        <button type="submit" class="btn">Check Now</button>
+      </form>
+
+      <div id="breachCheckLoading" style="display:none; margin-top: 16px; color: var(--muted);">
+        Checking... please wait.
+      </div>
+
+      <div id="breachCheckResult" style="margin-top: 20px;"></div>
     </div>
 
     <!-- Recent activity (dummy data for now) -->
@@ -94,10 +111,11 @@
     </div>
   </div>
 
-  <footer>&copy; 2026 Digital Identity Protection Portal </footer>
+  <footer>&copy; 2026 Digital Identity Protection Portal — Student Project</footer>
 
   <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
   <script src="js/cognito-config.js"></script>
+  <script src="js/api-config.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

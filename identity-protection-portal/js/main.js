@@ -163,3 +163,76 @@ if (logoutBtn) {
     sessionStorage.clear();
   });
 }
+
+// ---------- Breach Check tool ----------
+const openBreachCheck = document.getElementById("openBreachCheck");
+const breachCheckCard = document.getElementById("breachCheckCard");
+const breachCheckForm = document.getElementById("breachCheckForm");
+const breachCheckLoading = document.getElementById("breachCheckLoading");
+const breachCheckResult = document.getElementById("breachCheckResult");
+
+if (openBreachCheck) {
+  openBreachCheck.addEventListener("click", function (e) {
+    e.preventDefault();
+    breachCheckCard.style.display = "block";
+    breachCheckCard.scrollIntoView({ behavior: "smooth" });
+  });
+}
+
+if (breachCheckForm) {
+  breachCheckForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("breachEmail").value;
+    breachCheckResult.innerHTML = "";
+    breachCheckLoading.style.display = "block";
+
+    fetch(BREACH_CHECK_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email: email })
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        breachCheckLoading.style.display = "none";
+
+        if (data.error) {
+          breachCheckResult.innerHTML =
+            '<div class="result-error">⚠️ ' + data.error + "</div>";
+          return;
+        }
+
+        if (data.breachCount === 0) {
+          breachCheckResult.innerHTML =
+            '<div class="result-clean">✅ Good news! <strong>' +
+            data.email +
+            "</strong> was not found in any known data breaches.</div>";
+        } else {
+          let listItems = data.breaches
+            .map(function (b) {
+              return "<li>" + b + "</li>";
+            })
+            .join("");
+
+          breachCheckResult.innerHTML =
+            '<div class="result-breached">🔓 <strong>' +
+            data.email +
+            "</strong> was found in <strong>" +
+            data.breachCount +
+            "</strong> known breach(es):<ul>" +
+            listItems +
+            "</ul></div>";
+        }
+      })
+      .catch(function (err) {
+        breachCheckLoading.style.display = "none";
+        breachCheckResult.innerHTML =
+          '<div class="result-error">⚠️ Could not reach the breach check service. Please try again later.</div>';
+        console.error(err);
+      });
+  });
+}

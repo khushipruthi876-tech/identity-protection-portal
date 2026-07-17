@@ -293,3 +293,32 @@ footer {
   color: var(--muted);
   font-size: 0.85rem;
 }
+
+/* ---------- Breach check results ---------- */
+.result-clean {
+  background: #e9f8ef;
+  border: 1px solid #2e9e5b;
+  border-radius: var(--radius);
+  padding: 16px;
+  color: #1c6b3f;
+}
+
+.result-breached {
+  background: #fdeeee;
+  border: 1px solid #c0392b;
+  border-radius: var(--radius);
+  padding: 16px;
+  color: #8f2c20;
+}
+
+.result-breached ul {
+  margin: 10px 0 0 20px;
+}
+
+.result-error {
+  background: #fdf3e3;
+  border: 1px solid #d98f12;
+  border-radius: var(--radius);
+  padding: 16px;
+  color: #8a5b0a;
+}
