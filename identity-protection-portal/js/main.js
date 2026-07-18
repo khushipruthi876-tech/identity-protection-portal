@@ -241,6 +241,86 @@ if (breachCheckForm) {
   });
 }
 
+// ---------- Footprint Analyzer tool ----------
+const openFootprintCheck = document.getElementById("openFootprintCheck");
+const footprintCard = document.getElementById("footprintCard");
+const footprintForm = document.getElementById("footprintForm");
+const footprintLoading = document.getElementById("footprintLoading");
+const footprintResult = document.getElementById("footprintResult");
+
+if (openFootprintCheck) {
+  openFootprintCheck.addEventListener("click", function (e) {
+    e.preventDefault();
+    footprintCard.style.display = "block";
+    footprintCard.scrollIntoView({ behavior: "smooth" });
+  });
+}
+
+if (footprintForm) {
+  footprintForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const username = document.getElementById("footprintUsername").value;
+    const loggedInUser = sessionStorage.getItem("userEmail") || "";
+    footprintResult.innerHTML = "";
+    footprintLoading.style.display = "block";
+
+    fetch(FOOTPRINT_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: username, userId: loggedInUser })
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        footprintLoading.style.display = "none";
+
+        if (data.error) {
+          footprintResult.innerHTML =
+            '<div class="result-error">⚠️ ' + data.error + "</div>";
+          return;
+        }
+
+        if (data.foundCount === 0) {
+          footprintResult.innerHTML =
+            '<div class="result-clean">✅ No public profiles found for <strong>' +
+            data.username +
+            "</strong> across " +
+            data.platformsChecked +
+            " checked platforms.</div>";
+        } else {
+          let listItems = data.platformsFound
+            .map(function (p) {
+              return "<li>" + p + "</li>";
+            })
+            .join("");
+
+          footprintResult.innerHTML =
+            '<div class="result-breached">🔍 <strong>' +
+            data.username +
+            "</strong> was found on <strong>" +
+            data.foundCount +
+            "</strong> out of " +
+            data.platformsChecked +
+            " checked platforms:<ul>" +
+            listItems +
+            "</ul></div>";
+        }
+
+        loadSearchHistory();
+      })
+      .catch(function (err) {
+        footprintLoading.style.display = "none";
+        footprintResult.innerHTML =
+          '<div class="result-error">⚠️ Could not reach the footprint analyzer service. Please try again later.</div>';
+        console.error(err);
+      });
+  });
+}
+
 // ---------- Load real search history (Recent Activity + stat cards) ----------
 const activityList = document.getElementById("activityList");
 
@@ -267,26 +347,41 @@ function loadSearchHistory() {
       activityList.innerHTML = data.history
         .map(function (item) {
           const when = new Date(item.timestamp).toLocaleString();
-          const label =
-            item.breachCount > 0
-              ? "Breach check for " + item.searchedEmail + " — " + item.breachCount + " breach(es) found"
-              : "Breach check for " + item.searchedEmail + " — clean";
+          let label;
+
+          if (item.scanType === "footprint") {
+            label =
+              item.platformsFound && item.platformsFound.length > 0
+                ? "Footprint scan for " + item.searchedUsername + " — found on " + item.platformsFound.length + " platform(s)"
+                : "Footprint scan for " + item.searchedUsername + " — no public profiles found";
+          } else {
+            label =
+              item.breachCount > 0
+                ? "Breach check for " + item.searchedEmail + " — " + item.breachCount + " breach(es) found"
+                : "Breach check for " + item.searchedEmail + " — clean";
+          }
+
           return "<li><span>" + label + "</span><span class=\"time\">" + when + "</span></li>";
         })
         .join("");
 
-      // Update the top stat cards with the most recent result
-      const latest = data.history[0];
+      // Update the top stat cards with the most recent BREACH CHECK result
+      // (footprint scans don't have a breachCount, so we find the latest one that does)
+      const latestBreachCheck = data.history.find(function (item) {
+        return item.scanType !== "footprint";
+      });
+
       const riskScoreEl = document.getElementById("riskScoreValue");
       const breachCountEl = document.getElementById("breachCountValue");
       const lastScanEl = document.getElementById("lastScanValue");
 
-      if (breachCountEl) breachCountEl.textContent = latest.breachCount;
-      if (lastScanEl) lastScanEl.textContent = new Date(latest.timestamp).toLocaleDateString();
-      if (riskScoreEl) {
-        // Simple placeholder risk formula: more breaches = higher risk, capped at 100
-        const score = Math.min(100, latest.breachCount * 15);
-        riskScoreEl.textContent = score + " / 100";
+      if (latestBreachCheck) {
+        if (breachCountEl) breachCountEl.textContent = latestBreachCheck.breachCount;
+        if (lastScanEl) lastScanEl.textContent = new Date(latestBreachCheck.timestamp).toLocaleDateString();
+        if (riskScoreEl) {
+          const score = Math.min(100, latestBreachCheck.breachCount * 15);
+          riskScoreEl.textContent = score + " / 100";
+        }
       }
     })
     .catch(function (err) {

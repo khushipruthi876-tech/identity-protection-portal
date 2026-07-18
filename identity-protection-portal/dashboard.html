@@ -56,7 +56,7 @@
       <div class="card">
         <h3>🔍 Footprint Analyzer</h3>
         <p>Scan your public digital footprint across platforms.</p>
-        <a href="#" class="btn btn-secondary">Analyze</a>
+        <a href="#" class="btn btn-secondary" id="openFootprintCheck">Analyze</a>
       </div>
       <div class="card">
         <h3>📋 My Reports</h3>
@@ -85,6 +85,23 @@
       </div>
 
       <div id="breachCheckResult" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- Footprint Analyzer tool (hidden by default) -->
+    <div class="card" id="footprintCard" style="display:none; margin-top: 20px;">
+      <h2>🔍 Analyze Your Digital Footprint</h2>
+      <p>Enter a username to check which platforms it appears on.</p>
+
+      <form id="footprintForm" style="max-width: 420px;">
+        <input type="text" id="footprintUsername" placeholder="Username" required />
+        <button type="submit" class="btn btn-secondary">Analyze Now</button>
+      </form>
+
+      <div id="footprintLoading" style="display:none; margin-top: 16px; color: var(--muted);">
+        Scanning platforms... this can take up to 15 seconds.
+      </div>
+
+      <div id="footprintResult" style="margin-top: 20px;"></div>
     </div>
 
     <!-- Recent activity (populated with real data from DynamoDB) -->
