@@ -321,6 +321,70 @@ if (footprintForm) {
   });
 }
 
+// ---------- Risk Report ----------
+const openReport = document.getElementById("openReport");
+const reportCard = document.getElementById("reportCard");
+const reportLoading = document.getElementById("reportLoading");
+const reportContent = document.getElementById("reportContent");
+
+if (openReport) {
+  openReport.addEventListener("click", function (e) {
+    e.preventDefault();
+    reportCard.style.display = "block";
+    reportCard.scrollIntoView({ behavior: "smooth" });
+    loadReport();
+  });
+}
+
+function loadReport() {
+  const loggedInUser = sessionStorage.getItem("userEmail") || "";
+  if (!loggedInUser) return;
+
+  reportLoading.style.display = "block";
+  reportContent.innerHTML = "";
+
+  const url = REPORT_API_URL + "?userId=" + encodeURIComponent(loggedInUser);
+
+  fetch(url)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      reportLoading.style.display = "none";
+
+      if (data.error) {
+        reportContent.innerHTML = '<div class="result-error">⚠️ ' + data.error + "</div>";
+        return;
+      }
+
+      const badgeClass = data.riskLevel.toLowerCase();
+
+      const breachSourcesHtml =
+        data.uniqueBreachSources.length > 0
+          ? "<ul>" + data.uniqueBreachSources.map(function (b) { return "<li>" + b + "</li>"; }).join("") + "</ul>"
+          : "<p>No breach sources found.</p>";
+
+      const platformsHtml =
+        data.uniquePlatformsFound.length > 0
+          ? "<ul>" + data.uniquePlatformsFound.map(function (p) { return "<li>" + p + "</li>"; }).join("") + "</ul>"
+          : "<p>No public profiles found.</p>";
+
+      const recommendationsHtml =
+        "<ul>" + data.recommendations.map(function (r) { return "<li>" + r + "</li>"; }).join("") + "</ul>";
+
+      reportContent.innerHTML =
+        '<span class="risk-badge ' + badgeClass + '">' + data.riskLevel + " Risk — " + data.riskScore + "/100</span>" +
+        '<div class="report-section"><h4>Breach Exposure</h4><p>' + data.totalBreachScans + " scan(s) run, " + data.uniqueBreachSources.length + " unique breach source(s) found:</p>" + breachSourcesHtml + "</div>" +
+        '<div class="report-section"><h4>Digital Footprint</h4><p>' + data.totalFootprintScans + " scan(s) run, found on " + data.uniquePlatformsFound.length + " platform(s):</p>" + platformsHtml + "</div>" +
+        '<div class="report-section"><h4>Recommendations</h4>' + recommendationsHtml + "</div>";
+    })
+    .catch(function (err) {
+      reportLoading.style.display = "none";
+      reportContent.innerHTML = '<div class="result-error">⚠️ Could not generate report. Please try again later.</div>';
+      console.error(err);
+    });
+}
+
 // ---------- Load real search history (Recent Activity + stat cards) ----------
 const activityList = document.getElementById("activityList");
 

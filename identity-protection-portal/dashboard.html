@@ -61,7 +61,7 @@
       <div class="card">
         <h3>📋 My Reports</h3>
         <p>View your latest risk analysis report.</p>
-        <a href="#" class="btn">View Reports</a>
+        <a href="#" class="btn" id="openReport">View Reports</a>
       </div>
       <div class="card">
         <h3>💡 Awareness & Tips</h3>
@@ -102,6 +102,15 @@
       </div>
 
       <div id="footprintResult" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- Risk Report (hidden by default) -->
+    <div class="card" id="reportCard" style="display:none; margin-top: 20px;">
+      <h2>📋 Your Security Risk Report</h2>
+      <p>A summary based on all your breach checks and footprint scans.</p>
+
+      <div id="reportLoading" style="color: var(--muted);">Generating your report...</div>
+      <div id="reportContent" style="margin-top: 16px;"></div>
     </div>
 
     <!-- Recent activity (populated with real data from DynamoDB) -->

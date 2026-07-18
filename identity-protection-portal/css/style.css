@@ -322,3 +322,46 @@ footer {
   padding: 16px;
   color: #8a5b0a;
 }
+
+/* ---------- Risk report ---------- */
+.risk-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+.risk-badge.low {
+  background: #e9f8ef;
+  color: #1c6b3f;
+}
+
+.risk-badge.medium {
+  background: #fdf3e3;
+  color: #8a5b0a;
+}
+
+.risk-badge.high {
+  background: #fdeeee;
+  color: #8f2c20;
+}
+
+.report-section {
+  margin-bottom: 18px;
+}
+
+.report-section h4 {
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.report-section ul {
+  margin-left: 20px;
+  color: var(--muted);
+}
+
+.report-section p {
+  color: var(--muted);
+}
