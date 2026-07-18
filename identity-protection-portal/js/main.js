@@ -184,6 +184,7 @@ if (breachCheckForm) {
     e.preventDefault();
 
     const email = document.getElementById("breachEmail").value;
+    const loggedInUser = sessionStorage.getItem("userEmail") || "";
     breachCheckResult.innerHTML = "";
     breachCheckLoading.style.display = "block";
 
@@ -192,7 +193,7 @@ if (breachCheckForm) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({ email: email, userId: loggedInUser })
     })
       .then(function (response) {
         return response.json();
@@ -227,6 +228,9 @@ if (breachCheckForm) {
             listItems +
             "</ul></div>";
         }
+
+        // Refresh the Recent Activity list with real data
+        loadSearchHistory();
       })
       .catch(function (err) {
         breachCheckLoading.style.display = "none";
@@ -235,4 +239,62 @@ if (breachCheckForm) {
         console.error(err);
       });
   });
+}
+
+// ---------- Load real search history (Recent Activity + stat cards) ----------
+const activityList = document.getElementById("activityList");
+
+function loadSearchHistory() {
+  if (!activityList) return; // only run on dashboard.html
+
+  const loggedInUser = sessionStorage.getItem("userEmail") || "";
+  if (!loggedInUser) return;
+
+  const historyUrl = BREACH_CHECK_API_URL + "/history?userId=" + encodeURIComponent(loggedInUser);
+
+  fetch(historyUrl)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      if (data.error || !data.history) return;
+
+      if (data.history.length === 0) {
+        activityList.innerHTML = "<li><span>No activity yet. Run your first breach check!</span></li>";
+        return;
+      }
+
+      activityList.innerHTML = data.history
+        .map(function (item) {
+          const when = new Date(item.timestamp).toLocaleString();
+          const label =
+            item.breachCount > 0
+              ? "Breach check for " + item.searchedEmail + " — " + item.breachCount + " breach(es) found"
+              : "Breach check for " + item.searchedEmail + " — clean";
+          return "<li><span>" + label + "</span><span class=\"time\">" + when + "</span></li>";
+        })
+        .join("");
+
+      // Update the top stat cards with the most recent result
+      const latest = data.history[0];
+      const riskScoreEl = document.getElementById("riskScoreValue");
+      const breachCountEl = document.getElementById("breachCountValue");
+      const lastScanEl = document.getElementById("lastScanValue");
+
+      if (breachCountEl) breachCountEl.textContent = latest.breachCount;
+      if (lastScanEl) lastScanEl.textContent = new Date(latest.timestamp).toLocaleDateString();
+      if (riskScoreEl) {
+        // Simple placeholder risk formula: more breaches = higher risk, capped at 100
+        const score = Math.min(100, latest.breachCount * 15);
+        riskScoreEl.textContent = score + " / 100";
+      }
+    })
+    .catch(function (err) {
+      console.error("Could not load search history:", err);
+    });
+}
+
+// Auto-load history when the dashboard page opens
+if (activityList) {
+  loadSearchHistory();
 }

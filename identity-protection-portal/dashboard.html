@@ -22,26 +22,26 @@
       <p>This is your security dashboard. Run a check to get started.</p>
     </div>
 
-    <!-- Summary stats (dummy data for now) -->
+    <!-- Summary stats (updated with real data after your first breach check) -->
     <div class="grid" style="margin-bottom: 20px;">
       <div class="card stat-card">
         <div>
           <p style="margin-bottom: 4px;">Risk Score</p>
-          <div class="value risk-medium">62 / 100</div>
+          <div class="value risk-medium" id="riskScoreValue">— / 100</div>
         </div>
         <span style="font-size: 2rem;">⚠️</span>
       </div>
       <div class="card stat-card">
         <div>
           <p style="margin-bottom: 4px;">Breaches Found</p>
-          <div class="value risk-high">3</div>
+          <div class="value risk-high" id="breachCountValue">—</div>
         </div>
         <span style="font-size: 2rem;">🔓</span>
       </div>
       <div class="card stat-card">
         <div>
           <p style="margin-bottom: 4px;">Last Scan</p>
-          <div class="value" style="font-size: 1.1rem;">2 days ago</div>
+          <div class="value" style="font-size: 1.1rem;" id="lastScanValue">No scans yet</div>
         </div>
         <span style="font-size: 2rem;">🕒</span>
       </div>
@@ -87,26 +87,11 @@
       <div id="breachCheckResult" style="margin-top: 20px;"></div>
     </div>
 
-    <!-- Recent activity (dummy data for now) -->
+    <!-- Recent activity (populated with real data from DynamoDB) -->
     <div class="card" style="margin-top: 20px;">
       <h2>Recent Activity</h2>
-      <ul class="activity-list">
-        <li>
-          <span>Breach check run for your.email@example.com</span>
-          <span class="time">2 days ago</span>
-        </li>
-        <li>
-          <span>Footprint scan completed — 4 profiles found</span>
-          <span class="time">5 days ago</span>
-        </li>
-        <li>
-          <span>Risk report generated (Score: 62/100)</span>
-          <span class="time">5 days ago</span>
-        </li>
-        <li>
-          <span>Account created</span>
-          <span class="time">1 week ago</span>
-        </li>
+      <ul class="activity-list" id="activityList">
+        <li><span>Loading your recent activity...</span></li>
       </ul>
     </div>
   </div>
