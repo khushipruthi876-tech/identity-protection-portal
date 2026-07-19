@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Awareness & Tips - Identity Protection Portal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="navbar">
+    <h1>🛡️ Identity Protection Portal</h1>
+    <div>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="index.html">Home</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h2>💡 Awareness & Tips</h2>
+      <p>Practical steps you can take today to reduce your risk of identity theft and account compromise.</p>
+    </div>
+
+    <!-- Tips section -->
+    <div class="card">
+      <div class="tip-card" style="margin-bottom: 24px;">
+        <h3>🔑 Use a Password Manager</h3>
+        <p>Reusing passwords across sites means one breach can compromise every account tied to that password. A password manager generates and stores a unique, strong password for every site automatically.</p>
+      </div>
+
+      <div class="tip-card" style="margin-bottom: 24px;">
+        <h3>🔐 Enable Two-Factor Authentication (2FA)</h3>
+        <p>2FA adds a second layer of proof beyond your password — usually a code from your phone. Even if your password leaks, an attacker still can't get in without that second factor.</p>
+      </div>
+
+      <div class="tip-card" style="margin-bottom: 24px;">
+        <h3>📧 Watch for Phishing Emails</h3>
+        <p>Be suspicious of urgent emails asking you to "verify your account" or "reset your password" through a link. Always check the sender's actual email address and hover over links before clicking.</p>
+      </div>
+
+      <div class="tip-card" style="margin-bottom: 24px;">
+        <h3>🕵️ Limit What You Share Publicly</h3>
+        <p>Information like your birthday, pet's name, or mother's maiden name is often used in security questions. Avoid sharing these details publicly on social media.</p>
+      </div>
+
+      <div class="tip-card" style="margin-bottom: 24px;">
+        <h3>🔄 Check for Breaches Regularly</h3>
+        <p>Use this portal's Breach Check tool periodically — not just once — since new breaches are discovered constantly, and your information could be exposed at any time.</p>
+      </div>
+
+      <div class="tip-card">
+        <h3>🧹 Review Your Digital Footprint</h3>
+        <p>Old, forgotten accounts are a common attack surface. Use the Footprint Analyzer to see where your username shows up, and delete or secure accounts you no longer use.</p>
+      </div>
+    </div>
+
+    <!-- Quiz section -->
+    <div class="card">
+      <h2>🧠 Quick Security Quiz</h2>
+      <p>Test what you just learned — click an answer for each question.</p>
+
+      <div id="quizContainer"></div>
+      <div class="quiz-score" id="quizScore" style="display:none;"></div>
+    </div>
+  </div>
+
+  <footer>&copy; 2026 Digital Identity Protection Portal — Student Project</footer>
+
+  <script>
+    const quizData = [
+      {
+        question: "What's the safest way to handle passwords across multiple websites?",
+        options: [
+          "Use the same strong password everywhere",
+          "Use a password manager to generate unique passwords",
+          "Write them all down in a notes app",
+          "Use your birthday as a pattern for all passwords"
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "You get an urgent email saying 'Your account will be suspended, click here to verify now.' What should you do first?",
+        options: [
+          "Click the link immediately to avoid suspension",
+          "Reply with your password to confirm your identity",
+          "Check the sender's actual email address and avoid clicking suspicious links",
+          "Forward it to all your contacts"
+        ],
+        correctIndex: 2
+      },
+      {
+        question: "What does Two-Factor Authentication (2FA) protect you from?",
+        options: [
+          "Slow internet speeds",
+          "Someone logging in even if they know your password",
+          "Viruses on your computer",
+          "Spam emails"
+        ],
+        correctIndex: 1
+      },
+      {
+        question: "Why should you avoid posting your pet's name or birthday publicly?",
+        options: [
+          "It's considered rude on social media",
+          "These are commonly used as security question answers",
+          "It uses up storage space",
+          "It has no real security impact"
+        ],
+        correctIndex: 1
+      }
+    ];
+
+    let score = 0;
+    let answered = 0;
+
+    const quizContainer = document.getElementById("quizContainer");
+    const quizScore = document.getElementById("quizScore");
+
+    quizData.forEach(function (q, qIndex) {
+      const questionDiv = document.createElement("div");
+      questionDiv.className = "quiz-question";
+
+      const questionText = document.createElement("p");
+      questionText.textContent = (qIndex + 1) + ". " + q.question;
+      questionDiv.appendChild(questionText);
+
+      const optionsDiv = document.createElement("div");
+      optionsDiv.className = "quiz-options";
+
+      q.options.forEach(function (optionText, optIndex) {
+        const btn = document.createElement("button");
+        btn.className = "quiz-option";
+        btn.textContent = optionText;
+        btn.type = "button";
+
+        btn.addEventListener("click", function () {
+          // Prevent re-answering the same question
+          if (optionsDiv.dataset.answered === "true") return;
+          optionsDiv.dataset.answered = "true";
+
+          const allButtons = optionsDiv.querySelectorAll(".quiz-option");
+          allButtons.forEach(function (b, i) {
+            if (i === q.correctIndex) {
+              b.classList.add("correct");
+            } else if (i === optIndex) {
+              b.classList.add("incorrect");
+            }
+          });
+
+          if (optIndex === q.correctIndex) {
+            score++;
+          }
+          answered++;
+
+          if (answered === quizData.length) {
+            quizScore.style.display = "block";
+            quizScore.textContent = "You scored " + score + " out of " + quizData.length + "!";
+          }
+        });
+
+        optionsDiv.appendChild(btn);
+      });
+
+      questionDiv.appendChild(optionsDiv);
+      quizContainer.appendChild(questionDiv);
+    });
+  </script>
+
+</body>
+</html>

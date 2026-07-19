@@ -365,3 +365,67 @@ footer {
 .report-section p {
   color: var(--muted);
 }
+
+/* ---------- Awareness & Tips page ---------- */
+.tip-card {
+  border-left: 4px solid var(--primary);
+  padding-left: 16px;
+}
+
+.tip-card h3 {
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.tip-card p {
+  color: var(--muted);
+}
+
+.quiz-question {
+  margin-bottom: 24px;
+}
+
+.quiz-question p {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-option {
+  display: block;
+  padding: 10px 14px;
+  border: 1px solid #cbd6e2;
+  border-radius: var(--radius);
+  cursor: pointer;
+  background: white;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.quiz-option:hover {
+  background: #f4f8fc;
+}
+
+.quiz-option.correct {
+  background: #e9f8ef;
+  border-color: #2e9e5b;
+  color: #1c6b3f;
+}
+
+.quiz-option.incorrect {
+  background: #fdeeee;
+  border-color: #c0392b;
+  color: #8f2c20;
+}
+
+.quiz-score {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-top: 16px;
+}

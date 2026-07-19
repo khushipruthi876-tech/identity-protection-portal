@@ -3,6 +3,7 @@ import urllib.request
 import urllib.error
 import boto3
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("SearchHistory")
@@ -14,21 +15,32 @@ CORS_HEADERS = {
 }
 
 # ---------- Platforms to check ----------
-# Each entry: display name, profile URL template, and how to detect "exists"
+# Each entry: display name, profile URL template.
+# Chosen because they respond to simple requests without requiring
+# login or aggressive bot-blocking (unlike Instagram, X, Facebook, LinkedIn,
+# Snapchat — these platforms actively block automated profile checks and
+# were intentionally excluded to avoid giving unreliable/false results).
 PLATFORMS = [
     {"name": "GitHub", "url": "https://github.com/{u}"},
     {"name": "Reddit", "url": "https://www.reddit.com/user/{u}/about.json"},
     {"name": "Twitch", "url": "https://www.twitch.tv/{u}"},
     {"name": "Tumblr", "url": "https://{u}.tumblr.com"},
     {"name": "Pinterest", "url": "https://www.pinterest.com/{u}/"},
+    {"name": "SoundCloud", "url": "https://soundcloud.com/{u}"},
+    {"name": "Spotify", "url": "https://open.spotify.com/user/{u}"},
+    {"name": "Telegram", "url": "https://t.me/{u}"},
+    {"name": "VSCO", "url": "https://vsco.co/{u}"},
     {"name": "HackerNews", "url": "https://news.ycombinator.com/user?id={u}"},
+    {"name": "Quora", "url": "https://www.quora.com/profile/{u}"},
+    {"name": "Chess.com", "url": "https://www.chess.com/member/{u}"},
+    {"name": "Goodreads", "url": "https://www.goodreads.com/{u}"},
+    {"name": "Behance", "url": "https://www.behance.net/{u}"},
 ]
 
 
 def lambda_handler(event, context):
     http_method = event.get("requestContext", {}).get("http", {}).get("method", "")
 
-    # ---------- Handle CORS preflight ----------
     if http_method == "OPTIONS":
         return {
             "statusCode": 200,
@@ -47,12 +59,25 @@ def lambda_handler(event, context):
         found_on = []
         checked_count = 0
 
-        for platform in PLATFORMS:
-            url = platform["url"].format(u=username)
-            exists = check_url_exists(url)
-            checked_count += 1
-            if exists:
-                found_on.append(platform["name"])
+        # ---------- Check all platforms IN PARALLEL for speed ----------
+        with ThreadPoolExecutor(max_workers=len(PLATFORMS)) as executor:
+            future_to_platform = {
+                executor.submit(check_url_exists, platform["url"].format(u=username)): platform["name"]
+                for platform in PLATFORMS
+            }
+
+            for future in as_completed(future_to_platform):
+                platform_name = future_to_platform[future]
+                checked_count += 1
+                try:
+                    exists = future.result()
+                    if exists:
+                        found_on.append(platform_name)
+                except Exception:
+                    pass  # treat any failure as "not found" on that platform
+
+        # Sort alphabetically for consistent display
+        found_on.sort()
 
         # ---------- Save this scan to DynamoDB ----------
         if user_id:
@@ -85,13 +110,9 @@ def check_url_exists(url):
                 "User-Agent": "Mozilla/5.0 (identity-protection-portal footprint scanner)"
             }
         )
-        with urllib.request.urlopen(req, timeout=5) as resp:
+        with urllib.request.urlopen(req, timeout=4) as resp:
             return resp.status == 200
-    except urllib.error.HTTPError as e:
-        # 404 = not found, anything else we treat as "not found" too (safe default)
-        return False
     except Exception:
-        # Timeout, DNS error, blocked request, etc. — treat as unknown/not found
         return False
 
 
