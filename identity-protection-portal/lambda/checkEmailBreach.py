@@ -7,6 +7,11 @@ from decimal import Decimal
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table("SearchHistory")
+ses = boto3.client("ses", region_name="ap-south-1")
+
+# IMPORTANT: This must be an email address verified in SES.
+# In sandbox mode, both sender AND recipient must be verified.
+ALERT_SENDER_EMAIL = "pruthikhushi01@gmail.com"
 
 CORS_HEADERS = {
     "Access-Control-Allow-Origin": "*",
@@ -70,6 +75,10 @@ def check_breach(event):
                 "breaches": breach_names
             })
 
+        # ---------- Send an email alert if breaches were found ----------
+        if user_id and len(breach_names) > 0:
+            send_breach_alert(user_id, email, breach_names)
+
         return response(200, {
             "email": email,
             "breachCount": len(breach_names),
@@ -78,6 +87,37 @@ def check_breach(event):
 
     except Exception as e:
         return response(500, {"error": f"Something went wrong: {str(e)}"})
+
+
+def send_breach_alert(recipient_email, searched_email, breach_names):
+    """Send an SES email alert when breaches are found. Fails silently
+    (logs only) so a broken email never breaks the breach check itself."""
+    try:
+        breach_list_text = "\n".join(f"- {b}" for b in breach_names)
+
+        ses.send_email(
+            Source=ALERT_SENDER_EMAIL,
+            Destination={"ToAddresses": [recipient_email]},
+            Message={
+                "Subject": {"Data": "⚠️ Data Breach Alert - Identity Protection Portal"},
+                "Body": {
+                    "Text": {
+                        "Data": (
+                            f"We found that {searched_email} appears in the following "
+                            f"data breach(es):\n\n{breach_list_text}\n\n"
+                            f"Recommended actions:\n"
+                            f"- Change your password for the affected service(s)\n"
+                            f"- Enable two-factor authentication where possible\n"
+                            f"- Avoid reusing this password elsewhere\n\n"
+                            f"— Digital Identity Protection Portal"
+                        )
+                    }
+                }
+            }
+        )
+    except Exception as e:
+        # Don't let an email failure break the breach check response
+        print(f"Failed to send SES alert: {str(e)}")
 
 
 def get_history(event):
